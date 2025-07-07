@@ -1,6 +1,7 @@
 # Web Allowlist Extension
 
 A browser extension that controls web access by only allowing traffic to explicitly permitted websites, blocking all others.
+![image](https://github.com/user-attachments/assets/ef354ce6-3612-437c-9032-96fed173ace0)
 
 ## Features
 
