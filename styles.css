@@ -2,8 +2,6 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    backface-visibility: hidden;
-    transform: translateZ(0);
 }
 
 body {
@@ -17,8 +15,6 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transform: translateZ(0);
-    will-change: transform;
 }
 
 .container {
@@ -31,8 +27,6 @@ body {
     overflow: hidden;
     position: relative;
     margin: 8px;
-    transform: translateZ(0);
-    will-change: transform;
 }
 
 /* Header */
@@ -87,8 +81,6 @@ header {
     border: 1px solid rgba(255, 255, 255, 0.2);
     min-width: 180px;
     justify-content: space-between;
-    transform: translateZ(0);
-    will-change: transform;
 }
 
 .toggle-label {
@@ -106,7 +98,6 @@ header {
     height: 28px;
     margin: 0 12px;
     flex-shrink: 0;
-    transform: translateZ(0);
 }
 
 .switch input {
@@ -124,10 +115,7 @@ header {
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0.3);
-    transition: background-color 0.2s ease-out;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    will-change: background-color;
-    transform: translateZ(0);
 }
 
 .slider:before {
@@ -138,10 +126,7 @@ header {
     left: 2px;
     bottom: 2px;
     background: white;
-    transition: transform 0.2s ease-out;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    will-change: transform;
-    transform: translateZ(0);
 }
 
 input:checked+.slider {
@@ -150,7 +135,7 @@ input:checked+.slider {
 }
 
 input:checked+.slider:before {
-    transform: translateX(24px) translateZ(0);
+    left: 26px;
 }
 
 .slider.round {
@@ -166,17 +151,12 @@ input:checked+.slider:before {
     font-weight: 600;
     min-width: 32px;
     text-align: center;
-    transform: translateZ(0);
-    will-change: contents;
     white-space: nowrap;
 }
 
 /* Ensure smooth text changes */
 #statusText {
     display: inline-block;
-    transition: color 0.2s ease-out;
-    transform: translateZ(0);
-    will-change: contents;
     min-width: 24px;
     text-align: center;
 }
@@ -248,7 +228,6 @@ input:checked+.slider:before {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
     min-width: 100px;
     justify-content: center;
 }
@@ -303,27 +282,10 @@ input:checked+.slider:before {
 
 .tab-content {
     display: none;
-    opacity: 0;
-    transform: translateZ(0);
-    will-change: opacity, transform;
 }
 
 .tab-content.active {
     display: block;
-    opacity: 1;
-    animation: fadeIn 0.2s ease-out forwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Section Header */
@@ -379,9 +341,6 @@ input:checked+.slider:before {
     background: #f7fafc;
     border-radius: 12px;
     margin-bottom: 8px;
-    transform: translateZ(0);
-    will-change: transform, opacity;
-    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 #siteList li:last-child {
@@ -401,19 +360,15 @@ input:checked+.slider:before {
 }
 
 .remove-btn {
-    background: none;
+    background: transparent;
     border: none;
     color: #e53e3e;
     cursor: pointer;
-    padding: 8px;
-    margin-left: 12px;
-    border-radius: 8px;
-    transition: background 0.15s ease-out, transform 0.15s ease-out;
+    font-size: 18px;
+    padding: 4px 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
 }
 
 .remove-btn:hover {
@@ -552,40 +507,22 @@ input:checked+.slider:before {
     animation: slideIn 0.2s ease-out;
 }
 
-/* Prevent flickering */
-* {
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-}
+/* Prevent flickering - removed GPU transforms that caused issues */
 
-.container {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-}
 
-.toggle-wrapper {
-    will-change: auto;
-}
 
-.slider {
-    will-change: background, border-color;
-}
-
-.slider:before {
-    will-change: transform;
-}
 
 /* Responsive adjustments */
 @media (max-width: 450px) {
     body {
-        width: 100vw;
+        width: 100%;
+        min-height: 100vh;
     }
 
     .container {
+        margin: 0;
         border-radius: 0;
         min-height: 100vh;
-        margin: 0;
     }
 
     header {
@@ -593,6 +530,8 @@ input:checked+.slider:before {
     }
 
     .footer {
-        border-radius: 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
     }
 }

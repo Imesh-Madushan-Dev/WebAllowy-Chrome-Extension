@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Web Allowlist",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Control web access by only allowing traffic to explicitly permitted websites",
   "permissions": ["storage", "webRequest", "declarativeNetRequest"],
   "host_permissions": ["<all_urls>"],
