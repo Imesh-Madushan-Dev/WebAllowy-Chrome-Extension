@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Blocked - Web Allowlist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="25" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="25" cy="75" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15),
+                0 8px 16px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            margin-right: 16px;
+            filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .brand-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.025em;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 500;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .block-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 8px rgba(229, 62, 62, 0.2));
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .main-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 16px;
+            letter-spacing: -0.025em;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .url-display {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin: 24px 0 32px 0;
+            word-break: break-all;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2d3748;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .url-display::before {
+            content: '🌐';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: white;
+            padding: 0 8px;
+            font-size: 1.2rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .primary-btn:active {
+            transform: translateY(0);
+        }
+
+        .secondary-btn {
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .secondary-btn:hover {
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .container {
+                margin: 20px;
+                padding: 32px 24px;
+            }
+
+            .main-title {
+                font-size: 1.5rem;
+            }
+
+            .description {
+                font-size: 1rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="32" rx="8" fill="url(#gradient)" />
+                    <path
+                        d="M16 8C12.686 8 10 10.686 10 14V16C9.448 16 9 16.448 9 17V23C9 23.552 9.448 24 10 24H22C22.552 24 23 23.552 23 23V17C23 16.448 22.552 16 22 16V14C22 10.686 19.314 8 16 8ZM16 10C18.234 10 20 11.766 20 14V16H12V14C12 11.766 13.766 10 16 10ZM16 18C16.552 18 17 18.448 17 19C17 19.552 16.552 20 16 20C15.448 20 15 19.552 15 19C15 18.448 15.448 18 16 18Z"
+                        fill="white" />
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#667eea" />
+                            <stop offset="1" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1>Web Allowlist</h1>
+                <span class="tagline">Secure browsing control</span>
+            </div>
+        </div>
+
+        <div class="block-icon">🛡️</div>
+        <h2 class="main-title">Access Blocked</h2>
+
+        <p class="description">
+            This website is not on your allowed list. Your browsing session is being protected by the Web Allowlist
+            extension.
+        </p>
+
+        <div class="url-display" id="blockedUrl">Loading...</div>
+
+        <div class="actions">
+            <button id="addToAllowlist" class="btn primary-btn">
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                        clip-rule="evenodd" />
+                </svg>
+                Add to Allowlist
+            </button>
+            <button id="goBack" class="btn secondary-btn">
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                        clip-rule="evenodd" />
+                </svg>
+                Go Back
+            </button>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                <div class="security-badge">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Protected by Web Allowlist
+                </div>
+                <span>•</span>
+                <span>v1.0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the current URL
+            const currentUrl = window.location.href;
+            const referrer = document.referrer;
+
+            // Extract the domain from the URL
+            function extractDomain(url) {
+                try {
+                    const urlObj = new URL(url);
+                    return urlObj.hostname;
+                } catch (e) {
+                    console.error('Invalid URL:', url);
+                    return 'Unknown domain';
+                }
+            }
+
+            // Display the blocked URL (or a default message)
+            const domain = extractDomain(referrer || 'Unknown URL');
+            const blockedUrlElement = document.getElementById('blockedUrl');
+
+            // Animate the domain reveal
+            setTimeout(() => {
+                blockedUrlElement.textContent = domain;
+                blockedUrlElement.style.animation = 'slideUp 0.5s ease';
+            }, 300);
+
+            // Add event listeners
+            document.getElementById('goBack').addEventListener('click', () => {
+                // Add loading state
+                const button = document.getElementById('goBack');
+                button.innerHTML = '<span>Going back...</span>';
+                button.disabled = true;
+
+                setTimeout(() => {
+                    history.back();
+                }, 500);
+            });
+
+            document.getElementById('addToAllowlist').addEventListener('click', () => {
+                const button = document.getElementById('addToAllowlist');
+                const originalContent = button.innerHTML;
+
+                // Add loading state
+                button.innerHTML = '<span>Adding...</span>';
+                button.disabled = true;
+
+                // Send message to background script to add domain to allowlist
+                chrome.runtime.sendMessage({
+                    action: 'addToAllowlist',
+                    domain: domain
+                }, (response) => {
+                    if (response && response.success) {
+                        // Success state
+                        button.innerHTML = '<svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>Added Successfully!';
+                        button.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+
+                        if (response.alreadyExists) {
+                            showMessage('This site is already in your allowlist. Redirecting...', 'info');
+                        } else {
+                            showMessage(`Added ${domain} to your allowlist. Redirecting...`, 'success');
+                        }
+
+                        // Redirect to the original URL
+                        setTimeout(() => {
+                            if (referrer) {
+                                window.location.href = referrer;
+                            }
+                        }, 2000);
+                    } else {
+                        // Error state
+                        button.innerHTML = originalContent;
+                        button.disabled = false;
+                        showMessage('Error adding site to allowlist. Please try again or add it manually through the extension popup.', 'error');
+                    }
+                });
+            });
+
+            // Message display function
+            function showMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 1000;
+                    animation: slideDown 0.3s ease;
+                    ${type === 'success' ? 'background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);' :
+                        type === 'error' ? 'background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);' :
+                            'background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);'}
+                `;
+                messageDiv.textContent = message;
+                document.body.appendChild(messageDiv);
+
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+
+</html>
